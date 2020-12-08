@@ -4,8 +4,11 @@ import { getViewStates } from "features/layout/Selectors";
 import { MyConversations } from "features/joinedConversations/MyConversations/MyConversations";
 import { ThemeContext } from "styled-components";
 import { useMediaQuery } from "foundations/hooks/useMediaQuery";
-import { MyUserDetails } from "features/currentUser/MyUserDetails";
+// import { MyUserDetails } from "features/currentUser/MyUserDetails";
+import { getUniqueColor, getInitials } from "foundations/utilities";
+import { getLoggedInUserId } from "features/authentication/authenticationModel";
 import { menuViewHidden } from "features/layout/LayoutActions";
+import { Avatar, AvatarVariants } from "foundations/components/chat";
 import {
   Icon,
   Icons,
@@ -21,6 +24,7 @@ import {
 
 const Menu = () => {
   const views = useSelector(getViewStates);
+  const userId = useSelector(getLoggedInUserId);
   const theme = useContext(ThemeContext);
   const isMedium = useMediaQuery(theme.mediaQueries.medium);
   const dispatch = useDispatch();
@@ -47,13 +51,23 @@ const Menu = () => {
 
       <StyledBox padding={6}>
         <FlexRow>
-          <Icon icon={Icons.Logo} title="PubNub" />
+          {/* <Icon icon={Icons.Logo} title="CIMS" /> */}
+          <Avatar
+            variant={AvatarVariants.ROUND}
+            bg={getUniqueColor(
+              userId,
+              (theme.colors.avatars as any) as string[]
+            )}
+          >
+            {getInitials(userId)}
+          </Avatar>
           <StyledBox paddingLeft={4}>
             <FlexColumn minHeight={1}>
               <Heading variant={HeadingVariants.INVERSE}>
-                {theme.custom.companyName}
+                {/* {theme.custom.companyName} */}
+                {userId.split("@")[0]}
               </Heading>
-              <MyUserDetails />
+              {/* <MyUserDetails /> */}
             </FlexColumn>
           </StyledBox>
         </FlexRow>

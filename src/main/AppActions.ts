@@ -5,8 +5,21 @@ import {
 } from "features/joinedConversations/DraftsModel";
 import {
   logingInAction,
-  loginSucceededAction
+  loginSucceededAction,
+  loginFailedAction,
+  logoutAction
 } from "features/authentication/authenticationModel";
+import {
+  getConversationsAction,
+  getConversationsSuccessAction,
+  getConversationsFailedAction
+} from "features/conversations/conversationModel";
+import {
+  getMessagesAction,
+  getMessagesFailedAction,
+  getMessagesSuccessAction,
+  setSearchTermAction
+} from "features/messages/messageModel";
 import {
   menuViewDisplayedAction,
   currentConversationViewDisplayedAction,
@@ -39,6 +52,15 @@ import { MessageEnvelope } from "features/messages/messageModel";
 export type AppActions =
   | focusOnConversationAction
   | logingInAction
+  | loginFailedAction
+  | logoutAction
+  | getConversationsAction
+  | getConversationsSuccessAction
+  | getConversationsFailedAction
+  | getMessagesAction
+  | getMessagesFailedAction
+  | getMessagesSuccessAction
+  | setSearchTermAction
   | loginSucceededAction
   | MessageDraftUpdatedAction
   | MessageDraftDiscardedAction

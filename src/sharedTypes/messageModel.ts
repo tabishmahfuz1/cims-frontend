@@ -6,7 +6,7 @@ import { IGif } from "@giphy/js-types";
  */
 export enum MessageType {
   Text = "text",
-  Giphy = "giphy",
+  Giphy = "giphy"
 }
 
 /**
@@ -32,10 +32,18 @@ export interface Video {
   source: string;
 }
 
+export interface Document {
+  fileId: string;
+  type?: string;
+  mimetype?: string;
+  name?: string;
+}
+
 export enum AttachmentType {
   Image = "image",
   Video = "video",
   Link = "link",
+  Document = "document"
 }
 
 export interface BaseAttachment {
@@ -50,6 +58,13 @@ export interface ImageAttachment extends BaseAttachment {
 export interface VideoAttachment extends BaseAttachment {
   type: AttachmentType.Video;
   video: Video;
+  preview?: Image;
+}
+
+export interface DocumentAttachment extends BaseAttachment {
+  type: AttachmentType.Document;
+  file: Document;
+  description?: string;
   preview?: Image;
 }
 
@@ -72,7 +87,7 @@ export interface LinkAttachment {
   video?: Video;
 }
 
-export type Attachment = MediaAttachment | LinkAttachment;
+export type Attachment = MediaAttachment | LinkAttachment | DocumentAttachment;
 
 /**
  * Defines a text message with a UTF-8 encoding

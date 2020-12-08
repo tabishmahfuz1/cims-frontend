@@ -3,6 +3,7 @@ import { AttachmentDisplay } from "../AttachmentDisplay";
 import { TextMessage as TextMessageModel } from "../messageModel";
 import { TextMessage } from "foundations/components/chat";
 import { StyledBox } from "foundations/components/layout";
+import { DocumentAttachment } from "sharedTypes/messageModel";
 
 type TextMessageProps = {
   message: TextMessageModel;
@@ -18,12 +19,14 @@ export const TextMessageDisplay = ({
 }: TextMessageProps) => {
   return (
     <>
-      <TextMessage text={message.text} />
+      {!message.attachments?.length && <TextMessage text={message.text} />}
       {message.attachments?.map((attachment, index) => (
         <StyledBox marginTop="1">
           <AttachmentDisplay
             key={`${parentKey}-attachment-${index}`}
-            attachment={attachment}
+            attachment={
+              { ...attachment, description: message.text } as DocumentAttachment
+            }
           />
         </StyledBox>
       ))}

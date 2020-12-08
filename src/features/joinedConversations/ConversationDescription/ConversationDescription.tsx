@@ -16,7 +16,7 @@ import { FlexRow, FlexColumn } from "foundations/components/layout";
 export interface ConversationDescriptionFragment {
   id: string;
   name: string;
-  description: string;
+  code: string;
 }
 
 /**
@@ -49,7 +49,7 @@ const ConversationDescription = ({
         <Avatar bg={color}>#</Avatar>
         <FlexColumn marginLeft="5" minHeight="1">
           <Label variant={LabelVariants.DARK}>{conversation.name}</Label>
-          <Label>{conversation.description}</Label>
+          <Label>{conversation.code}</Label>
         </FlexColumn>
       </FlexRow>
     </Button>

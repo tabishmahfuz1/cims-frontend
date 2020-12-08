@@ -23,7 +23,7 @@ const pubnubConfig = Object.assign(
 );
 const pubnub = new Pubnub(pubnubConfig);
 
-const store = createAppStore({
+export const store = createAppStore({
   pubnub: {
     api: pubnub
   }

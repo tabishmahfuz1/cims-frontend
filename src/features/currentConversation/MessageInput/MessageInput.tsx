@@ -6,9 +6,9 @@ import { getMessageDrafts } from "features/joinedConversations/DraftsModel";
 import { updateMessageDraft } from "features/joinedConversations/updateMessageDraftCommand";
 import { discardMessageDraft } from "features/joinedConversations/discardMessageDraftCommand";
 import { sendMessage } from "features/messages/sendMessage";
-import { sendTypingIndicator } from "features/typingIndicator/sendTypingIndicator";
+// import { sendTypingIndicator } from "features/typingIndicator/sendTypingIndicator";
 import { MessageType } from "features/messages/messageModel";
-import { DraftMessage } from "features/messages/draft";
+import { DraftTextMessage } from "features/messages/draft";
 import { MessageEditor } from "features/messages/MessageEditor";
 import { getCurrentConversationId } from "../currentConversationModel";
 import {
@@ -23,7 +23,7 @@ const typingIndicators: {
 
 const getConversationMessageDraft = createSelector(
   [getMessageDrafts, getCurrentConversationId],
-  (drafts, conversationId): DraftMessage | undefined => {
+  (drafts, conversationId): DraftTextMessage | undefined => {
     return drafts[conversationId];
   }
 );
@@ -34,18 +34,18 @@ const getConversationMessageDraft = createSelector(
 export const MessageInput = () => {
   const conversationId: string = useSelector(getCurrentConversationId);
   const userId: string = useSelector(getLoggedInUserId);
-  const storedDraft: DraftMessage | undefined = useSelector(
+  const storedDraft: DraftTextMessage | undefined = useSelector(
     getConversationMessageDraft
   );
-  const defaultDraft: DraftMessage = {
+  const defaultDraft: DraftTextMessage = {
     type: MessageType.Text,
     senderId: userId,
     text: ""
   };
-  const message: DraftMessage = storedDraft ? storedDraft : defaultDraft;
+  const message: DraftTextMessage = storedDraft ? storedDraft : defaultDraft;
   const dispatch = useDispatch();
 
-  const notifyTyping = () => {
+  /* const notifyTyping = () => {
     if (!typingIndicators[conversationId]) {
       typingIndicators[conversationId] = true;
       dispatch(sendTypingIndicator(TypingIndicatorType.ShowTypingIndicator));
@@ -62,24 +62,24 @@ export const MessageInput = () => {
       typingIndicators[conversationId] = false;
       dispatch(sendTypingIndicator(TypingIndicatorType.HideTypingIndicator));
     }
-  };
+  }; */
 
-  const send = (appMessage: DraftMessage) => {
+  const send = (appMessage: DraftTextMessage) => {
     dispatch(sendMessage(appMessage));
     dispatch(discardMessageDraft(conversationId));
     typingIndicators[conversationId] = false;
   };
 
-  const update = (appMessage: DraftMessage) => {
+  const update = (appMessage: DraftTextMessage) => {
     dispatch(updateMessageDraft(conversationId, appMessage));
 
-    if ("text" in appMessage) {
+    /* if ("text" in appMessage) {
       if (appMessage.text.length > 0) {
         notifyTyping();
       } else {
         notifyStopTyping();
       }
-    }
+    } */
   };
 
   return (

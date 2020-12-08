@@ -7,7 +7,10 @@ import { MessageType, TextMessage, GiphyMessage } from "./messageModel";
  * This does not have to be the case for complext message types.  some fields might
  * be optional in the draft but required in the final version for example.
  */
-export type DraftTextMessage = TextMessage;
+export interface DraftTextMessage extends TextMessage {
+  labels?: string[];
+  attachments?: any[];
+}
 
 export type DraftGiphyMessage = GiphyMessage;
 

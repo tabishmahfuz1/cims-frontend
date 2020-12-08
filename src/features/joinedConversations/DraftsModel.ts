@@ -1,7 +1,7 @@
 import { AppState } from "main/storeTypes";
 import { AppActions } from "main/AppActions";
 import { createSelector } from "reselect";
-import { DraftMessage } from "features/messages/draft";
+import { DraftTextMessage } from "features/messages/draft";
 
 export const MESSAGE_DRAFT_UPDATED = "MESSAGE_DRAFT_UPDATED";
 export const MESSAGE_DRAFT_DISCARDED = "MESSAGE_DRAFT_DISCARDED";
@@ -10,7 +10,7 @@ export interface MessageDraftUpdatedAction {
   type: typeof MESSAGE_DRAFT_UPDATED;
   payload: {
     conversationId: string;
-    value: DraftMessage;
+    value: DraftTextMessage;
   };
 }
 
@@ -24,7 +24,7 @@ export interface MessageDraftDiscardedAction {
 /**
  * Describes a way to lookup a user from a userId
  */
-export type DraftsIndex = { [id: string]: DraftMessage };
+export type DraftsIndex = { [id: string]: DraftTextMessage };
 
 export interface ConversationDraftState {
   messageDraftById: DraftsIndex;

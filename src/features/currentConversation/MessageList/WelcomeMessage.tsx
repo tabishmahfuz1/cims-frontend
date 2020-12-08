@@ -15,8 +15,8 @@ const capitalize = (string: string): string => {
 
 const welcome = (name: string): MessageFragment => ({
   sender: {
-    id: "PUBNUB-BOT",
-    name: "PubNub Bot"
+    id: "PUBNUB-BOT"
+    // name: "PubNub Bot"
   },
   timetoken: "15735897955841496",
   message: {

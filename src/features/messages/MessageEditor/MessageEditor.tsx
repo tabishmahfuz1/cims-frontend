@@ -1,15 +1,15 @@
 import React from "react";
 import invariant from "invariant";
-import { DraftMessage } from "../draft";
+import { DraftTextMessage } from "../draft";
 import { MessageType } from "../messageModel";
 import { TextMessageEditor } from "../TextMessageEditor";
 import { BaseMessage } from "sharedTypes/messageModel";
 import { StyledBox } from "foundations/components/layout";
 
 type MessageEditorProps = {
-  message: DraftMessage;
-  sendDraft: (message: DraftMessage) => void;
-  updateDraft: (message: DraftMessage) => void;
+  message: DraftTextMessage;
+  sendDraft: (message: DraftTextMessage) => void;
+  updateDraft: (message: DraftTextMessage) => void;
 };
 
 /**

@@ -1,5 +1,6 @@
 import React from "react";
 import { ConversationOccupancy } from "../ConversationOccupancy";
+import { SearchCurrentConverssation } from "../SearchCurrentConverssation";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 import {
@@ -14,7 +15,7 @@ import { FlexRow, StyledBox } from "foundations/components/layout";
 export interface ConversationDescriptionFragment {
   id: string;
   name: string;
-  description: string;
+  code: string;
 }
 
 export const getCurrentConversationDescription = createSelector(
@@ -50,11 +51,9 @@ const Header = () => {
           />
         </StyledBox>
 
-        <Title
-          heading={conversation.name}
-          label={conversation.description}
-        ></Title>
+        <Title heading={conversation.name} label={conversation.code}></Title>
 
+        <SearchCurrentConverssation />
         <ConversationOccupancy />
       </FlexRow>
 

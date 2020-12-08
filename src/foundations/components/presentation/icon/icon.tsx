@@ -12,6 +12,7 @@ import { ReactComponent as People } from "foundations/svg/people.svg";
 import { ReactComponent as Presence } from "foundations/svg/presence.svg";
 import { ReactComponent as Search } from "foundations/svg/search.svg";
 import { ReactComponent as Send } from "foundations/svg/send.svg";
+import { ReactComponent as Attachment } from "foundations/svg/attachment.svg";
 
 interface IconWrapperProps {
   /** Show pointer cursor on hover */
@@ -36,7 +37,8 @@ export enum Icons {
   People = "People",
   Presence = "Presence",
   Search = "Search",
-  Send = "Send"
+  Send = "Send",
+  Attachment = "Attachment"
 }
 
 const IconComponents: {
@@ -52,7 +54,8 @@ const IconComponents: {
   People,
   Presence,
   Search,
-  Send
+  Send,
+  Attachment
 };
 
 const Wrapper = Styled.object<IconWrapperProps>`

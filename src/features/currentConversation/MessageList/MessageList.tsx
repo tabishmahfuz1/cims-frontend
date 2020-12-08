@@ -1,27 +1,35 @@
-import React, { useEffect, useState, useCallback, useContext } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  useRef
+} from "react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import { MessageListItem, MessageFragment } from "../MessageListItem";
 import { getCurrentConversationId } from "../currentConversationModel";
 import { getUsersById } from "features/users/userModel";
-import { getMessagesById } from "features/messages/messageModel";
+import { getMessagesById, getSearchTerm } from "features/messages/messageModel";
 import { getUniqueColor, getInitials } from "foundations/utilities";
 import { Avatar, AvatarVariants } from "foundations/components/chat";
 import { ScrollView, FlexColumn } from "foundations/components/layout";
 import { ThemeContext } from "styled-components";
-import {
-  usePagination,
-  GetNextPage,
-  SavePaginationState
-} from "foundations/hooks/usePagination";
-import { fetchMessageHistory, fetchUserData } from "pubnub-redux";
-import {
-  MessageHistoryRetrievedAction,
-  HistoryResponseMessage
-} from "pubnub-redux/dist/features/message/MessageActions";
+import { conversationId as defaultConversationId } from "config/defaultConversation.json";
+// import {
+//   usePagination,
+//   GetNextPage,
+//   SavePaginationState
+// } from "foundations/hooks/usePagination";
+// import { fetchMessageHistory, fetchUserData } from "pubnub-redux";
+// import {
+//   MessageHistoryRetrievedAction,
+//   HistoryResponseMessage
+// } from "pubnub-redux/dist/features/message/MessageActions";
 import { useDispatch } from "react-redux";
-import { getHistoryPaginationStateById } from "features/pagination/Selectors";
-import { setHistoryPagination } from "features/pagination/PaginationActions";
+import { getConversationMessages } from "features/messages/messageCommands";
+// import { getHistoryPaginationStateById } from "features/pagination/Selectors";
+// import { setHistoryPagination } from "features/pagination/PaginationActions";
 
 /**
  * Create a selector that that returns the list of messages in the currentConversation joined
@@ -46,20 +54,10 @@ export const getCurrentConversationMessages = createSelector(
               return {
                 ...message,
                 timetoken: String(message.timetoken),
-                sender:
-                  (users[message.message.senderId] as {
-                    id: string;
-                    name: string;
-                  }) ||
-                  (users[message.message.senderId]
-                    ? {
-                        id: message.message.senderId,
-                        name: message.message.senderId
-                      }
-                    : {
-                        id: "unknown",
-                        name: "unknown"
-                      })
+                sender: {
+                  id: message.message.senderId
+                  // name: message.message.senderId
+                }
               };
             }
           )
@@ -94,7 +92,7 @@ export const getUnknownUsers = createSelector(
 );
 
 // prevent multiple fetches for the same data
-const wasFetched = (() => {
+/* const wasFetched = (() => {
   const ids: { [id: string]: boolean } = {};
   return (id: string) => {
     if (ids.hasOwnProperty(id)) {
@@ -104,17 +102,23 @@ const wasFetched = (() => {
       return false;
     }
   };
-})();
+})(); */
 
 const MessageList = () => {
   const dispatch = useDispatch();
   const [height, setHeight] = useState(0);
   type ConversationScrollPositionsType = { [conversationId: string]: number };
   const conversationId: string = useSelector(getCurrentConversationId);
+  const searchTerm = useSelector(getSearchTerm);
   const [
     conversationsScrollPositions,
     setConversationsScrollPositions
   ] = useState<ConversationScrollPositionsType>({});
+
+  useEffect(() => {
+    if (defaultConversationId !== conversationId)
+      dispatch(getConversationMessages(conversationId));
+  }, [conversationId, searchTerm]);
 
   const updateCurrentConversationScrollPosition = (scrollPosition: number) => {
     setConversationsScrollPositions({
@@ -130,6 +134,8 @@ const MessageList = () => {
     }
   };
 
+  /* 
+  * Pagination Code. Might be needed later
   const storedPaginationState = useSelector(getHistoryPaginationStateById)[
     conversationId
   ];
@@ -180,7 +186,10 @@ const MessageList = () => {
     conversationId,
     savePaginationState,
     restorePaginationState
-  );
+  ); */
+
+  const containerRef = useRef<HTMLDivElement>();
+  const endRef = useRef<HTMLDivElement>();
 
   const restoreConversationScrollPosition = (conversationId: string) => {
     const conversationScrollPosition: number =
@@ -204,7 +213,7 @@ const MessageList = () => {
     getCurrentConversationMessages
   );
 
-  const unknownUsers = useSelector(getUnknownUsers);
+  /*   const unknownUsers = useSelector(getUnknownUsers);
   useEffect(() => {
     // send requests for missing data
     unknownUsers.forEach(uuid => {
@@ -216,7 +225,7 @@ const MessageList = () => {
         );
       }
     });
-  }, [unknownUsers, dispatch]);
+  }, [unknownUsers, dispatch]); */
 
   const el = containerRef.current;
 
@@ -254,12 +263,15 @@ const MessageList = () => {
   const theme = useContext(ThemeContext);
 
   return (
-    <ScrollView ref={containerRef} onScroll={handleScroll}>
+    <ScrollView
+      ref={containerRef as React.RefObject<HTMLDivElement>}
+      onScroll={handleScroll}
+    >
       <FlexColumn minHeight="100%" flexGrow={1} paddingBottom="1">
         {/* This moves the list of messages to the bottom, since there's a bug with flex-end scroll */}
         <FlexColumn flex="1 1 auto"></FlexColumn>
 
-        <div ref={endRef} />
+        <div ref={endRef as React.RefObject<HTMLDivElement>} />
         {messages.map(message => (
           <MessageListItem
             messageFragment={message}
@@ -272,7 +284,7 @@ const MessageList = () => {
                   (theme.colors.avatars as any) as string[]
                 )}
               >
-                {getInitials(message.sender.name)}
+                {getInitials(message.sender.id)}
               </Avatar>
             }
           />

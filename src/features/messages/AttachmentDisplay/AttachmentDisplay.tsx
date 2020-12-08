@@ -1,6 +1,10 @@
 import React from "react";
 import invariant from "invariant";
-import { LinkMessage, ImageMessage } from "foundations/components/chat";
+import {
+  LinkMessage,
+  ImageMessage,
+  DocumentMessage
+} from "foundations/components/chat";
 import { AttachmentType, Attachment } from "sharedTypes/messageModel";
 
 type AttachmentProps = {
@@ -12,6 +16,18 @@ type AttachmentProps = {
  */
 export const AttachmentDisplay = ({ attachment }: AttachmentProps) => {
   switch (attachment.type) {
+    case AttachmentType.Document: {
+      const nameParts = attachment?.file?.name?.split(".");
+
+      const props = {
+        id: attachment.file.fileId,
+        type: nameParts ? nameParts[nameParts.length - 1] : undefined,
+        description: attachment.description,
+        title: attachment.file.name,
+        image: attachment.preview?.source
+      };
+      return <DocumentMessage {...props} />;
+    }
     case AttachmentType.Link:
       const props = {
         provider: attachment.provider,

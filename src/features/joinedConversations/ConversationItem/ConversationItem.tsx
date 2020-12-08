@@ -69,7 +69,7 @@ const ConversationItem = ({
         <Icon
           icon={Icons.Leave}
           color="onPrimary"
-          title="Leave Conversation"
+          title="Leave Room"
           onClick={e => {
             e.stopPropagation();
             onLeave();

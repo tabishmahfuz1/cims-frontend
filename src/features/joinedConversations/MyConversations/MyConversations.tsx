@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createSelector } from "reselect";
 import { getCurrentConversationId } from "features/currentConversation/currentConversationModel";
@@ -6,7 +6,8 @@ import { getConversationsByUserId } from "../joinedConversationModel";
 import { MembershipHash } from "../joinedConversationModel";
 import {
   ConversationsIndexedById,
-  getConversationsById
+  getConversationsById,
+  getAllConversations
 } from "features/conversations/conversationModel";
 import { focusOnConversation } from "features/currentConversation/currentConversationModel";
 import { getLoggedInUserId } from "features/authentication/authenticationModel";
@@ -24,16 +25,8 @@ import {
   joinConversationViewDisplayed,
   menuViewHidden
 } from "features/layout/LayoutActions";
-import {
-  usePagination,
-  GetNextPage,
-  SavePaginationState
-} from "foundations/hooks/usePagination";
-import { fetchMemberships } from "pubnub-redux";
-import { MembershipsRetrievedAction } from "pubnub-redux/dist/features/membership/MembershipActions";
-import { ChannelMembershipObject } from "pubnub";
-import { getMembershipsPaginationStateById } from "features/pagination/Selectors";
-import { setMembershipsPagination } from "features/pagination/PaginationActions";
+
+import { getRooms } from "../../conversations/conversationCommads";
 
 export interface ConversationFragment {
   id: string;
@@ -41,20 +34,13 @@ export interface ConversationFragment {
 }
 
 export const getJoinedConversations = createSelector(
-  [getConversationsById, getLoggedInUserId, getConversationsByUserId],
+  [getAllConversations, getLoggedInUserId],
   (
-    conversations: ConversationsIndexedById,
-    userId: string,
-    userConversations: MembershipHash
+    conversations: Array<ConversationFragment>,
+    userId: string
   ): ConversationFragment[] => {
-    return userConversations[userId]
-      ? userConversations[userId].map(conversation => {
-          return {
-            id: conversation.id,
-            name: conversations[conversation.id].name
-          };
-        })
-      : [];
+    console.log("[My Conversations] Conversations", conversations);
+    return conversations;
   }
 );
 
@@ -70,67 +56,10 @@ const MyConversations = () => {
     dispatch(joinConversationViewDisplayed());
   };
 
-  const storedPaginationState = useSelector(getMembershipsPaginationStateById)[
-    currentUserId
-  ];
-
-  const restorePaginationState = useCallback(() => {
-    return storedPaginationState;
-  }, [storedPaginationState]);
-
-  const savePaginationState: SavePaginationState<
-    string | undefined,
-    string
-  > = useCallback(
-    (channel, pagination, count, pagesRemain) => {
-      dispatch(
-        setMembershipsPagination(channel, { pagination, count, pagesRemain })
-      );
-    },
-    [dispatch]
-  );
-
-  const getNextPage: GetNextPage<
-    ChannelMembershipObject<{}, {}>,
-    string | undefined,
-    string
-  > = useCallback(
-    async (next, total, uuid) => {
-      const pageSize = 20;
-      const action = ((await dispatch(
-        fetchMemberships({
-          uuid,
-          limit: pageSize,
-          include: {
-            channelFields: true,
-            customChannelFields: false,
-            customFields: false,
-            totalCount: true
-          },
-          page: {
-            next: next || undefined
-          }
-        })
-      )) as unknown) as MembershipsRetrievedAction<{}, {}, unknown>;
-      const response = action.payload.response;
-      return {
-        results: response.data,
-        pagination: response.next,
-        pagesRemain:
-          response.data.length > 0 && response.totalCount && total
-            ? total + response.data.length < response.totalCount
-            : response.data.length === pageSize
-      };
-    },
-    [dispatch]
-  );
-
-  const { containerRef, endRef } = usePagination(
-    getNextPage,
-    currentUserId,
-    savePaginationState,
-    restorePaginationState
-  );
+  useEffect(() => {
+    // console.log("Emitting GET_CONVERSATIONS");
+    dispatch(getRooms());
+  }, []);
 
   if (conversationsById === undefined) {
     return <div>Loading...</div>;
@@ -144,17 +73,18 @@ const MyConversations = () => {
           icon={Icons.Add}
           color={"onPrimary"}
           onClick={openOverlay}
-          title="Join conversation"
+          title="Join Room"
           clickable
         />
       </FlexRow>
 
-      <ScrollView ref={containerRef}>
+      <ScrollView>
         {conversations.map(conversation => (
           <ConversationItem
             id={conversation.id}
             name={conversation.name}
             onLeave={() => {
+              // Dispatch event to emit leave request to API
               dispatch(leaveConversation(currentUserId, conversation.id));
             }}
             selected={conversation.id === currentConversationId}
@@ -167,7 +97,6 @@ const MyConversations = () => {
             }}
           ></ConversationItem>
         ))}
-        <div ref={endRef} />
       </ScrollView>
     </>
   );

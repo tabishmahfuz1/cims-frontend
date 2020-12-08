@@ -1,19 +1,14 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "styled-components";
 import useHover from "foundations/hooks/useHover";
-import { Icon, Icons, Title } from "foundations/components/presentation";
+import { /* Icon, Icons,  */ Title } from "foundations/components/presentation";
 import { Avatar, AvatarVariants } from "foundations/components/chat";
-import { StyledBox, ListItem } from "foundations/components/layout";
+import { /*  StyledBox,  */ ListItem } from "foundations/components/layout";
 import { getUniqueColor, getInitials } from "foundations/utilities";
 
 export interface UserFragment {
-  name: string;
   id: string;
-  custom: {
-    title: string;
-  };
-  profileUrl: string;
-  presence: boolean;
+  customTitle?: string;
 }
 
 interface MemberDescriptionProps {
@@ -28,15 +23,15 @@ const MemberDescription = ({ user, you }: MemberDescriptionProps) => {
     user.id,
     (theme.colors.avatars as unknown) as string[]
   );
-  const nameWithYou = `${user.name}${you ? " (you)" : ""}`;
+  const nameWithYou = `${user.id}${you ? " (you)" : ""}`;
 
   return (
     <ListItem bg={isHovering && theme.backgrounds.panelHover} {...hoverProps}>
       <Avatar variant={AvatarVariants.ROUND} bg={avatarBg}>
-        {getInitials(user.name)}
+        {getInitials(user.id)}
       </Avatar>
 
-      {user.presence && (
+      {/*user.presence && (
         <StyledBox position="relative" height={1}>
           <StyledBox
             position="absolute"
@@ -47,9 +42,9 @@ const MemberDescription = ({ user, you }: MemberDescriptionProps) => {
             <Icon icon={Icons.Presence} color={"success"} />
           </StyledBox>
         </StyledBox>
-      )}
+      )*/}
 
-      <Title heading={nameWithYou} label={user.custom.title} capitalize></Title>
+      <Title heading={nameWithYou} label={user.customTitle} capitalize></Title>
     </ListItem>
   );
 };

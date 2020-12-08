@@ -14,7 +14,7 @@ import { AppMessage } from "features/messages/messageModel";
 export interface MessageFragment {
   sender: {
     id: string;
-    name: string;
+    // name: string;
   };
   timetoken: string;
   message: AppMessage;
@@ -44,7 +44,7 @@ const MessageListItem = ({ messageFragment, avatar }: MessageProps) => {
       <FlexColumn marginLeft="5" flexGrow={1}>
         <FlexRow marginBottom="1">
           <StyledBox marginRight="3">
-            <Heading>{sender.name}</Heading>
+            <Heading>{sender.id}</Heading>
           </StyledBox>
           <Label size={LabelSizes.SMALL}>
             {convertTimestampToTime(messageFragment.timetoken)}

@@ -7,12 +7,18 @@ export interface ConversationMembersCount {
 }
 
 const getMembersCountByConversationIdSlice = (state: AppState) =>
-  state.conversationMembersCount;
+  Object.keys(state.conversations.conversations).reduce(
+    (acc, k) => ({
+      ...acc,
+      [k]: state.conversations.conversations[k].members.length
+    }),
+    {}
+  );
 
 export const getMembersCountByConversationId = createSelector(
   [getMembersCountByConversationIdSlice],
-  (users: { byId: ConversationMembersCount }) => {
-    return users.byId;
+  (users: ConversationMembersCount) => {
+    return users;
   }
 );
 
