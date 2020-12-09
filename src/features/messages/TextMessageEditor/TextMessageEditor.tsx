@@ -88,8 +88,7 @@ export const TextMessageEditor = ({
       const draft = newTextDraft(message, text, file, labels);
       // console.log("Draft was", draft);
       if (isDraftModified(draft)) {
-        console.log("File", file, labels);
-        sendDraft({ ...draft, labels, attachments: [file] });
+        sendDraft({ ...draft });
         setLabels([]);
         setFile(undefined);
       }
